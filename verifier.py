@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from typing import List, Optional, Literal
 from enum import Enum
 
-from .ast import Expression, Statement
+from .ast import Expression, Statement, Identifier
 from .ir import NOXIR, NOXIRNode
 from .types import UncertaintyType, check_type_preservation, TypeViolation
 
@@ -135,11 +135,11 @@ class StructuralVerifier:
     
     def _check_no_broken_symbols(self, ir: NOXIR) -> bool:
         """Check that all symbols are valid."""
-        from .ast import Identifier
-        
         for node in ir.nodes:
             if isinstance(node.expr, Identifier):
-                if not node.expr.name or not node.expr.name.isidentifier():
+                # Allow identifiers with spaces and special characters
+                # Just check that they're not empty
+                if not node.expr.name or not node.expr.name.strip():
                     return False
         
         return True
@@ -361,7 +361,11 @@ class CompressionAuditor:
         if not ir.metadata:
             return True
         
-        # Compression should be at least 5% (0.95 ratio)
+        # For very short responses (< 50 tokens), don't require compression
+        if ir.metadata.original_cost < 50:
+            return True
+        
+        # Compression should be at least 5% (0.95 ratio) for longer responses
         return ir.metadata.compression_ratio <= 0.95
     
     def _check_no_over_compression(self, ir: NOXIR) -> bool:

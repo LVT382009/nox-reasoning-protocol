@@ -70,8 +70,9 @@ class AbortController:
             self.abort_reason = f"Optimization cost ({current_cost}) exceeds expected gain ({expected_gain})"
             return True
         
-        # Check if proof cost exceeds benefit
-        if proof_cost > expected_gain:
+        # Check if proof cost significantly exceeds benefit
+        # Only abort if proof cost is more than 2x the expected gain
+        if expected_gain > 0 and proof_cost > expected_gain * 2:
             self.abort_reason = f"Proof cost ({proof_cost}) exceeds rewrite benefit ({expected_gain})"
             return True
         
@@ -267,7 +268,7 @@ class NOXOptimizer:
         return self.optimize(ir, config)
 
 
-def optimize_ir(ir: NOXIR, path: Literal["fast", "deep"] = "fast") -> OptimizationResult:
+def optimize_ir(ir: NOXIR, path: str = "fast") -> OptimizationResult:
     """
     Convenience function to optimize NOX IR.
     

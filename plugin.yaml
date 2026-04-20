@@ -1,0 +1,36 @@
+name: nox
+version: "1.0.0"
+description: |
+  NOX (Neural Operational eXpression) - Latency-constrained proof-carrying
+  e-graph compiler for Hermes Agent that optimizes reasoning while preserving
+  semantic correctness.
+
+  Compiles natural language reasoning into a dense symbolic representation (NOX IR),
+  optimizes it using bounded equality saturation, and decodes it back to natural language.
+
+  Architecture: Approach A′.2 — Latency-Constrained Proof-Carrying E-Graph Compiler
+  with Stratified Grammar.
+
+author: LVT382009
+license: MIT
+
+hooks:
+  post_llm_call:
+    enabled: true
+    priority: 100  # Run after other post-processing
+
+commands:
+  - name: nox
+    description: NOX validation and optimization
+    subcommands:
+      - enable: Enable NOX validation
+      - disable: Disable NOX validation
+      - status: Show NOX status and performance metrics
+
+settings:
+  enabled: false
+  mode: balanced  # conservative | balanced | aggressive
+  fast_path_budget_ms: 20
+  deep_path_budget_ms: 30
+  hard_ceiling_ms: 100
+  target_compression: 0.4  # 40% target compression

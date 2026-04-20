@@ -119,8 +119,8 @@ class NOXProgram:
 @dataclass
 class ProgramMetadata:
     """Metadata for NOX program."""
-    path: Literal["fast", "deep"]
-    tier: Literal[0, 1, 2, 3]
+    path: str  # "fast" or "deep"
+    tier: int  # 0, 1, 2, or 3
     compression_estimate: float
     original_text: Optional[str] = None
 

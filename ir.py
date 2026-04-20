@@ -61,7 +61,7 @@ class ProofCertificate:
     rewrite_id: str
     original_expr: Expression
     transformed_expr: Expression
-    proof_type: Literal["local_legality", "compositional", "full_semantic"]
+    proof_type: str  # "local_legality", "compositional", or "full_semantic"
     
     # Proof content
     invariants_preserved: List[str]
@@ -74,7 +74,7 @@ class ProofCertificate:
     
     # Verification status
     verified: bool
-    verification_method: Literal["type_check", "structural", "semantic"]
+    verification_method: str  # "type_check", "structural", or "semantic"
     
     # Rollback path
     rollback_expr: Expression
@@ -303,7 +303,7 @@ def create_ir_from_program(program: NOXProgram, path: Literal["fast", "deep"]) -
     # Calculate original cost
     original_cost = sum(
         estimate_expression_cost(stmt.expr) if hasattr(stmt, 'expr')
-        else estimate_expression_cost(stmt.condition) + estimate_expression_cost(stmt.consequence) if isinstance(stmt, type(program).__dataclass_fields__['condition'].default)
+        else estimate_expression_cost(stmt.condition) + estimate_expression_cost(stmt.consequence) if hasattr(stmt, 'condition')
         else 1
         for stmt in program.statements
     )

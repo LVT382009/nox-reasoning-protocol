@@ -36,7 +36,7 @@ class GrowthRisk(Enum):
 @dataclass
 class RewriteRuleMetadata:
     """Metadata for a rewrite rule."""
-    tier: Literal[0, 1, 2, 3]
+    tier: int  # 0, 1, 2, or 3
     estimated_token_gain: float  # 0.0 to 1.0
     matcher_cost: RewriteCost
     proof_cost: RewriteCost
@@ -66,6 +66,7 @@ class RewriteRule:
         self.application_count = 0
         self.total_gain = 0
         self.disabled = False
+        self.enabled = metadata.enabled  # Add enabled attribute
     
     def apply(self, expr: Expression) -> RewriteResult:
         """
@@ -382,7 +383,7 @@ class RewriteRuleRegistry:
         # Tier 2 rules
         self.rules.append(CompressImplicationChain())
     
-    def get_rules_for_tier(self, tier: Literal[0, 1, 2, 3]) -> List[RewriteRule]:
+    def get_rules_for_tier(self, tier: int) -> List[RewriteRule]:
         """Get all rules for a specific tier."""
         return [rule for rule in self.rules if rule.metadata.tier == tier and rule.enabled and not rule.disabled]
     
